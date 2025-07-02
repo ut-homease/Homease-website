@@ -1,0 +1,29 @@
+{
+  "short_name": "HOMEase",
+  "name": "HOMEase - Safe, Secure, Independent Living",
+  "description": "AI-powered home safety assessments for aging-in-place modifications",
+  "icons": [
+    {
+      "src": "logo.jpg",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "logo.jpg",
+      "type": "image/jpeg",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo.jpg",
+      "type": "image/jpeg",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#0ea5e9",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "categories": ["health", "lifestyle", "utilities"],
+  "lang": "en"
+} 
