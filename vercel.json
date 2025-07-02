@@ -5,7 +5,8 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "build"
+        "distDir": "build",
+        "buildCommand": "npm run build"
       }
     }
   ],
@@ -21,6 +22,38 @@
     {
       "src": "/manifest.json",
       "dest": "/manifest.json"
+    },
+    {
+      "src": "/logo.jpg",
+      "dest": "/logo.jpg"
+    },
+    {
+      "src": "/logo card.webp",
+      "dest": "/logo card.webp"
+    },
+    {
+      "src": "/contractor.webp",
+      "dest": "/contractor.webp"
+    },
+    {
+      "src": "/grandma.webp",
+      "dest": "/grandma.webp"
+    },
+    {
+      "src": "/desktop mockup.jpg",
+      "dest": "/desktop mockup.jpg"
+    },
+    {
+      "src": "/download apple.png",
+      "dest": "/download apple.png"
+    },
+    {
+      "src": "/google download.png",
+      "dest": "/google download.png"
+    },
+    {
+      "src": "/step (.*).webp",
+      "dest": "/step $1.webp"
     },
     {
       "src": "/(.*)",
