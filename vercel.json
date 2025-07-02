@@ -1,63 +1,63 @@
 {
   "version": 2,
+  "framework": "create-react-app",
   "builds": [
     {
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "build",
-        "buildCommand": "npm run build"
+        "distDir": "build"
       }
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
+      "source": "/static/(.*)",
+      "destination": "/static/$1"
     },
     {
-      "src": "/favicon.ico",
-      "dest": "/favicon.ico"
+      "source": "/favicon.ico",
+      "destination": "/favicon.ico"
     },
     {
-      "src": "/manifest.json",
-      "dest": "/manifest.json"
+      "source": "/manifest.json",
+      "destination": "/manifest.json"
     },
     {
-      "src": "/logo.jpg",
-      "dest": "/logo.jpg"
+      "source": "/logo.jpg",
+      "destination": "/logo.jpg"
     },
     {
-      "src": "/logo card.webp",
-      "dest": "/logo card.webp"
+      "source": "/logo card.webp",
+      "destination": "/logo card.webp"
     },
     {
-      "src": "/contractor.webp",
-      "dest": "/contractor.webp"
+      "source": "/contractor.webp",
+      "destination": "/contractor.webp"
     },
     {
-      "src": "/grandma.webp",
-      "dest": "/grandma.webp"
+      "source": "/grandma.webp",
+      "destination": "/grandma.webp"
     },
     {
-      "src": "/desktop mockup.jpg",
-      "dest": "/desktop mockup.jpg"
+      "source": "/desktop mockup.jpg",
+      "destination": "/desktop mockup.jpg"
     },
     {
-      "src": "/download apple.png",
-      "dest": "/download apple.png"
+      "source": "/download apple.png",
+      "destination": "/download apple.png"
     },
     {
-      "src": "/google download.png",
-      "dest": "/google download.png"
+      "source": "/google download.png",
+      "destination": "/google download.png"
     },
     {
-      "src": "/step (.*).webp",
-      "dest": "/step $1.webp"
+      "source": "/step (.*).webp",
+      "destination": "/step $1.webp"
     },
     {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
