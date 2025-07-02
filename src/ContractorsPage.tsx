@@ -246,12 +246,12 @@ const ContractorsPage: React.FC = () => {
       <section className="py-8 bg-gray-50">
         <div className="flex justify-center">
           <div className="flex flex-row gap-4">
-            <a href="#" className="transition-all duration-300 transform hover:scale-105">
+            <button className="transition-all duration-300 transform hover:scale-105">
               <img src="/download apple.png" alt="Download on the App Store" className="h-12 w-auto bg-transparent" />
-            </a>
-            <a href="#" className="transition-all duration-300 transform hover:scale-105">
+            </button>
+            <button className="transition-all duration-300 transform hover:scale-105">
               <img src="/google download.png" alt="Get it on Google Play" className="h-12 w-auto bg-transparent object-cover" />
-            </a>
+            </button>
           </div>
         </div>
       </section>
@@ -260,7 +260,7 @@ const ContractorsPage: React.FC = () => {
       <section className="w-full">
         <img 
           src="/contractor.webp" 
-          alt="Contractor at work" 
+          alt="Contractor working on home modification" 
           className="w-full h-auto object-cover block"
           style={{ maxHeight: '480px' }}
         />
