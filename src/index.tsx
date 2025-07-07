@@ -1,18 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import AboutPage from './AboutPage';
 import ContactPage from './ContactPage';
 import BlogPage from './BlogPage';
 import InvestorsPage from './InvestorsPage';
 import ContractorsPage from './ContractorsPage';
+import TermsPage from './TermsPage';
+import PrivacyPage from './PrivacyPage';
 import Header from './Header';
 import Footer from './Footer';
+import CookieConsent from './components/CookieConsent';
+import ScrollToTop from './components/ScrollToTop';
+import analyticsService from './services/analytics';
 import './index.css';
 
 function App() {
+  const [cookieConsent, setCookieConsent] = useState<{
+    analytics: boolean;
+    marketing: boolean;
+    necessary: boolean;
+  } | null>(null);
+
+  useEffect(() => {
+    // Check for existing consent on app load
+    const savedConsent = analyticsService.getConsentStatus();
+    if (savedConsent) {
+      setCookieConsent(savedConsent);
+      analyticsService.updateConsent(savedConsent);
+    }
+  }, []);
+
+  const handleConsentChange = (preferences: {
+    analytics: boolean;
+    marketing: boolean;
+    necessary: boolean;
+  }) => {
+    setCookieConsent(preferences);
+    analyticsService.updateConsent(preferences);
+  };
+
   return (
     <Router>
+      <ScrollToTop />
+      <PageTracker />
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -21,15 +52,29 @@ function App() {
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/investors" element={<InvestorsPage />} />
           <Route path="/contractors" element={<ContractorsPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
         </Routes>
+        <CookieConsent onConsentChange={handleConsentChange} />
       </div>
     </Router>
   );
 }
 
+// Component to track page views
+function PageTracker() {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Track page view when location changes
+    analyticsService.trackPageView(location.pathname);
+  }, [location]);
+
+  return null;
+}
+
 function HomePage() {
   const [isVisible, setIsVisible] = useState(false);
-  const [showCookiesModal, setShowCookiesModal] = useState(true);
   const [showChat, setShowChat] = useState(false);
 
   const [chatMessages, setChatMessages] = useState([
@@ -74,33 +119,6 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Cookies Modal */}
-      {showCookiesModal && (
-        <div className="fixed bottom-4 left-4 right-4 md:bottom-6 md:right-6 md:left-auto z-50">
-          <div className="bg-white rounded-2xl p-4 md:p-6 shadow-2xl border border-gray-200 max-w-sm mx-auto md:mx-0">
-            <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">
-              This website uses cookies.
-            </h3>
-            <p className="text-xs md:text-sm text-gray-600 mb-3 md:mb-4 leading-relaxed">
-              We use cookies to analyze website traffic and optimize your website experience. By accepting our use of cookies, your data will be aggregated with all other user data.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <button 
-                onClick={() => setShowCookiesModal(false)}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-3 md:px-4 rounded-lg transition-all duration-300 transform hover:scale-105 text-xs md:text-sm flex-1 sm:flex-none"
-              >
-                Accept
-              </button>
-              <button 
-                onClick={() => setShowCookiesModal(false)}
-                className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-3 md:px-4 rounded-lg transition-all duration-300 transform hover:scale-105 text-xs md:text-sm flex-1 sm:flex-none"
-              >
-                Decline
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Chat Feature */}
       <div className="fixed bottom-6 right-6 z-40">
@@ -192,35 +210,52 @@ function HomePage() {
       
       <main className="flex-grow">
         {/* Unified Hero + App Preview Section */}
-        <section className="bg-gradient-to-br from-blue-50 to-indigo-50 py-20 px-4 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-400/10 animate-pulse"></div>
-          <div className="container mx-auto max-w-6xl relative z-10">
+        <section className="bg-gray-900 py-20 px-6 sm:px-8 lg:px-4">
+          <div className="container mx-auto max-w-6xl">
             {/* Site Title */}
             <div className="text-center mb-12 md:mb-16">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 mb-4">
-                H<span className="text-blue-600">E</span> | AI
-              </h1>
-              <p className="text-lg md:text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto px-4">
+              <div className="flex justify-center mb-4">
+                <img 
+                  src="/logo_transparent.png" 
+                  alt="HOMEase" 
+                  className="h-16 md:h-20 lg:h-24 xl:h-28 w-auto"
+                />
+              </div>
+              <p className="text-lg md:text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto px-4">
                 Effortless, AI-Guided Home Modification
               </p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               {/* Left: Headline, Subheadline, Download Badges */}
-              <div className={`space-y-8 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                  Stay <span className="text-blue-600 animate-pulse">Safe, Secure,</span> and Independent in Your Own Home
+              <div className="space-y-8">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                  Stay <span className="text-blue-400">Safe, Secure,</span> and Independent in Your Own Home
                 </h1>
-                <p className="text-xl text-gray-600 leading-relaxed">
+                <p className="text-xl text-gray-300 leading-relaxed">
                   Don't let fear keep you from living fully. Our AI-powered home safety assessments help you maintain your independence and dignity while giving your family peace of mind.
                 </p>
-
+                
+                {/* Available Soon Badge */}
+                <div className="bg-blue-600 text-white rounded-full px-6 py-2 mb-4 inline-block">
+                  <span className="font-semibold text-sm">AVAILABLE SOON</span>
+                </div>
+                
+                {/* Download Buttons */}
+                <div className="flex flex-row gap-4">
+                  <a href="#">
+                    <img src="/download apple.png" alt="Download on the App Store" className="h-12 w-auto bg-transparent" />
+                  </a>
+                  <a href="#">
+                    <img src="/google download.png" alt="Get it on Google Play" className="h-12 w-auto bg-transparent object-cover" />
+                  </a>
+                </div>
               </div>
               {/* Right: iPhone Mockup */}
-              <div className="relative flex justify-center">
+              <div className="flex justify-center">
                 {/* iPhone Frame */}
-                <div className="relative w-64 md:w-72 h-[500px] md:h-[600px] bg-black rounded-[2rem] md:rounded-[3rem] p-2 shadow-2xl">
+                <div className="w-64 md:w-72 h-[500px] md:h-[600px] bg-black rounded-[2rem] md:rounded-[3rem] p-2 border border-gray-300 shadow-2xl">
                   {/* Screen */}
-                  <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden relative">
+                  <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden">
                     {/* Status Bar */}
                     <div className="bg-black text-white px-6 py-2 flex justify-between items-center text-xs font-medium">
                       <span>9:41</span>
@@ -232,101 +267,27 @@ function HomePage() {
                       </div>
                     </div>
                     {/* App Content */}
-                    <div className="bg-gradient-to-br from-blue-500 to-blue-700 h-full p-6">
-                      {/* App Header */}
-                      <div className="text-center text-white mb-8">
-                        <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                          <span className="text-white font-bold text-2xl">H</span>
-                        </div>
-                        <h3 className="text-xl font-bold mb-1">HOMEase</h3>
-                        <p className="text-sm opacity-90">Safety Assessment</p>
+                    <div className="bg-blue-600 h-full flex flex-col items-center justify-center p-6">
+                      {/* App Logo */}
+                      <div className="w-20 h-20 bg-white bg-opacity-20 rounded-3xl flex items-center justify-center mb-6">
+                        <span className="text-white font-bold text-3xl">H</span>
                       </div>
-                      {/* Main Menu */}
-                      <div className="space-y-4">
-                        <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-white">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 bg-white/30 rounded-xl flex items-center justify-center">
-                                <span className="text-lg">📱</span>
-                              </div>
-                              <div>
-                                <p className="font-semibold">Scan Room</p>
-                                <p className="text-xs opacity-80">AI Safety Analysis</p>
-                              </div>
-                            </div>
-                            <span className="text-2xl">→</span>
-                          </div>
-                        </div>
-                        <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-white">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 bg-white/30 rounded-xl flex items-center justify-center">
-                                <span className="text-lg">📊</span>
-                              </div>
-                              <div>
-                                <p className="font-semibold">View Report</p>
-                                <p className="text-xs opacity-80">Safety Recommendations</p>
-                              </div>
-                            </div>
-                            <span className="text-2xl">→</span>
-                          </div>
-                        </div>
-                        <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-white">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 bg-white/30 rounded-xl flex items-center justify-center">
-                                <span className="text-lg">👷</span>
-                              </div>
-                              <div>
-                                <p className="font-semibold">Find Contractors</p>
-                                <p className="text-xs opacity-80">Local Professionals</p>
-                              </div>
-                            </div>
-                            <span className="text-2xl">→</span>
-                          </div>
-                        </div>
+                      
+                      {/* App Name */}
+                      <h3 className="text-2xl font-bold text-white mb-2">HOMEase</h3>
+                      <p className="text-sm text-white opacity-90 mb-8">Safety Assessment</p>
+                      
+                      {/* Coming Soon Badge */}
+                      <div className="bg-white bg-opacity-20 rounded-full px-6 py-2 mb-6">
+                        <span className="text-white font-semibold text-sm">COMING SOON</span>
                       </div>
-                      {/* Bottom Navigation */}
-                      <div className="absolute bottom-6 left-6 right-6">
-                        <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-3">
-                          <div className="flex justify-around">
-                            <div className="text-center">
-                              <div className="w-8 h-8 bg-white/30 rounded-lg mx-auto mb-1"></div>
-                              <span className="text-xs text-white">Home</span>
-                            </div>
-                            <div className="text-center">
-                              <div className="w-8 h-8 bg-white/30 rounded-lg mx-auto mb-1"></div>
-                              <span className="text-xs text-white">Scan</span>
-                            </div>
-                            <div className="text-center">
-                              <div className="w-8 h-8 bg-white/30 rounded-lg mx-auto mb-1"></div>
-                              <span className="text-xs text-white">Reports</span>
-                            </div>
-                            <div className="text-center">
-                              <div className="w-8 h-8 bg-white/30 rounded-lg mx-auto mb-1"></div>
-                              <span className="text-xs text-white">Profile</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      
+                      {/* Description */}
+                      <p className="text-white text-center text-sm opacity-90 leading-relaxed max-w-48">
+                        AI-powered home safety assessments to keep you independent and secure
+                      </p>
                     </div>
                   </div>
-                  {/* Home Button */}
-                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-gray-400 rounded-full"></div>
-                </div>
-                {/* Subtle Shadow */}
-                <div className="absolute -bottom-4 w-72 h-4 bg-black/20 rounded-full blur-xl"></div>
-              </div>
-              
-              {/* Download Buttons */}
-              <div className="flex justify-center mt-8">
-                <div className="flex flex-row gap-4">
-                  <a href="#" className="transition-all duration-300 transform hover:scale-105">
-                    <img src="/download apple.png" alt="Download on the App Store" className="h-12 w-auto bg-transparent" />
-                  </a>
-                  <a href="#" className="transition-all duration-300 transform hover:scale-105">
-                    <img src="/google download.png" alt="Get it on Google Play" className="h-12 w-auto bg-transparent object-cover" />
-                  </a>
                 </div>
               </div>
             </div>
@@ -363,93 +324,96 @@ function HomePage() {
           </div>
         </section>
 
-        {/* Demo Video Section */}
+
+        {/* How It Works Section */}
         <section className="py-20 px-4 bg-white">
-          <div className="container mx-auto max-w-4xl">
-            <div className="text-center mb-12">
+          <div className="container mx-auto max-w-6xl">
+            <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                See How It Works
+                How It Works
               </h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                See how easy it is to scan your home and get instant safety recommendations in just 2 minutes
+                Get your complete home safety assessment in just a few simple steps
               </p>
             </div>
             
-            <div className="relative">
-              {/* Video Container */}
-              <div className="relative bg-gray-900 rounded-2xl overflow-hidden shadow-2xl">
-                {/* Video Placeholder */}
-                <div className="aspect-video bg-gradient-to-br from-blue-900 to-purple-900 relative">
-                  {/* Animated Background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 animate-pulse"></div>
-                  
-                  {/* Video Content Overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center text-white">
-                      {/* Play Button */}
-                      <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6 hover:bg-white/30 transition-all duration-300 cursor-pointer transform hover:scale-110">
-                        <div className="w-0 h-0 border-l-[20px] border-l-white border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent ml-1"></div>
-                      </div>
-                      
-                      {/* Video Info */}
-                      <h3 className="text-2xl font-bold mb-2">HOMEase Demo</h3>
-                      <p className="text-lg opacity-90 mb-4">Complete Home Safety Assessment</p>
-                      
-                      {/* Video Stats */}
-                      <div className="flex justify-center space-x-6 text-sm opacity-75">
-                        <span>2:34</span>
-                        <span>HD</span>
-                        <span>4K</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Video Controls Overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
-                    <div className="flex items-center justify-between text-white">
-                      <div className="flex items-center space-x-4">
-                        <button className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
-                          <div className="w-0 h-0 border-l-[8px] border-l-white border-t-[5px] border-t-transparent border-b-[5px] border-b-transparent ml-0.5"></div>
-                        </button>
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm">0:00</span>
-                          <div className="w-32 h-1 bg-white/30 rounded-full">
-                            <div className="w-8 h-1 bg-white rounded-full"></div>
-                          </div>
-                          <span className="text-sm">2:34</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <button className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
-                          <span className="text-xs">🔊</span>
-                        </button>
-                        <button className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
-                          <span className="text-xs">⛶</span>
-                        </button>
-                        <button className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
-                          <span className="text-xs">⋯</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* STEP ONE */}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-full max-w-xs h-48 mb-6 rounded-xl border-2 border-blue-200 overflow-hidden shadow-lg">
+                  <img src="/step 1.webp" alt="Step 1 - Upload Room Photo" className="w-full h-full object-cover" />
                 </div>
+                <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">1</div>
+                <h3 className="font-bold text-lg mb-2">Scan Your Home</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Use your smartphone to scan rooms and upload photos of areas you want to assess for safety.
+                </p>
               </div>
               
-              {/* Video Description */}
-              <div className="mt-8 text-center">
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                  Complete Home Safety Assessment Demo
-                </h3>
-                <p className="text-gray-600 max-w-2xl mx-auto">
-                  Watch as we demonstrate the complete HOMEase experience - from scanning a room to receiving detailed safety recommendations and connecting with qualified contractors. See how our AI technology identifies potential hazards and provides actionable solutions.
-                </p>
-                <div className="mt-6 flex justify-center space-x-4 text-sm text-gray-500">
-                  <span>• Room scanning demonstration</span>
-                  <span>• AI analysis in real-time</span>
-                  <span>• Safety report generation</span>
-                  <span>• Contractor matching</span>
+              {/* STEP TWO */}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-full max-w-xs h-48 mb-6 rounded-xl border-2 border-blue-200 overflow-hidden shadow-lg">
+                  <img src="/step 2.webp" alt="Step 2 - AI Analysis" className="w-full h-full object-cover" />
                 </div>
+                <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">2</div>
+                <h3 className="font-bold text-lg mb-2">AI Safety Analysis</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Our AI and AR technology analyze your photos and provide ADA-compliant safety recommendations.
+                </p>
               </div>
+              
+              {/* STEP THREE */}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-full max-w-xs h-48 mb-6 rounded-xl border-2 border-blue-200 overflow-hidden shadow-lg">
+                  <img src="/step 3.webp" alt="Step 3 - Lead Qualification" className="w-full h-full object-cover" />
+                </div>
+                <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">3</div>
+                <h3 className="font-bold text-lg mb-2">Get Your Report</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Receive a detailed safety assessment with specific recommendations and project scope.
+                </p>
+              </div>
+              
+              {/* STEP FOUR */}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-full max-w-xs h-48 mb-6 rounded-xl border-2 border-blue-200 overflow-hidden shadow-lg">
+                  <img src="/step 4.webp" alt="Step 4 - Contractor Matching" className="w-full h-full object-cover" />
+                </div>
+                <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">4</div>
+                <h3 className="font-bold text-lg mb-2">Connect with Contractors</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  We'll match you with qualified local contractors who specialize in home safety modifications.
+                </p>
+              </div>
+              
+              {/* STEP FIVE */}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-full max-w-xs h-48 mb-6 rounded-xl border-2 border-blue-200 overflow-hidden shadow-lg">
+                  <img src="/step 5.webp" alt="Step 5 - Lead Purchase" className="w-full h-full object-cover" />
+                </div>
+                <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">5</div>
+                <h3 className="font-bold text-lg mb-2">Get Multiple Quotes</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Compare quotes from different contractors and choose the best option for your needs and budget.
+                </p>
+              </div>
+              
+              {/* STEP SIX */}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-full max-w-xs h-48 mb-6 rounded-xl border-2 border-blue-200 overflow-hidden shadow-lg">
+                  <img src="/step 6.webp" alt="Step 6 - Customer Contact" className="w-full h-full object-cover" />
+                </div>
+                <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">6</div>
+                <h3 className="font-bold text-lg mb-2">Start Your Project</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Work with your chosen contractor to implement the safety modifications and enjoy a safer home.
+                </p>
+              </div>
+            </div>
+            
+            {/* AI Measurement Note */}
+            <div className="mt-12 bg-blue-50 border-l-4 border-blue-600 p-6 rounded-xl text-blue-900 text-center text-lg font-semibold max-w-2xl mx-auto">
+              Our AI provides accurate measurements and detailed project scopes to help you get the right modifications for your home.
             </div>
           </div>
         </section>
@@ -591,6 +555,12 @@ function HomePage() {
             <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
               Download our app today and take the first step toward a safer, more comfortable home
             </p>
+            
+            {/* Available Soon Badge */}
+            <div className="bg-white text-blue-600 rounded-full px-6 py-2 mb-6 inline-block">
+              <span className="font-semibold text-sm">AVAILABLE SOON</span>
+            </div>
+            
             <div className="flex justify-center">
               <div className="flex flex-row gap-4">
                 <a href="#" className="transition-all duration-300 transform hover:scale-105">

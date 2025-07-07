@@ -8,10 +8,14 @@ const ContractorsPage: React.FC = () => {
     company: '',
     email: '',
     phone: '',
-    service: '',
+    capsCertified: '',
     experience: '',
     message: ''
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitMessage, setSubmitMessage] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -20,10 +24,68 @@ const ContractorsPage: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission - will be implemented later
-    console.log('Contractor signup:', formData);
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+    setSubmitMessage('');
+
+    try {
+      // Create form data for URL-encoded submission
+      const formDataToSend = new URLSearchParams();
+      Object.entries(formData).forEach(([key, value]) => {
+        formDataToSend.append(key, value);
+      });
+
+      const response = await fetch('https://script.google.com/macros/s/AKfycbwHIrOHVGaHhcx9v5Tx8NQTQ6Wrx3buxbUrXHTpjGQKHr0PvA_gscKTkUWC5V8UtCRDKA/exec', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formDataToSend.toString()
+      });
+
+      const responseText = await response.text();
+      console.log('Response text:', responseText);
+      
+      let result;
+      
+      // Check if the response contains form data (indicating success)
+      if (responseText.includes('name=') || responseText.includes('success') || responseText.includes('Thank you')) {
+        result = { success: true, message: 'Application submitted successfully! We will contact you within 24-48 hours.' };
+      } else {
+        try {
+          result = JSON.parse(responseText);
+        } catch (error) {
+          // If we can't parse JSON and it doesn't contain form data, assume error
+          result = { success: false, message: 'There was an error submitting your application. Please try again.' };
+        }
+      }
+
+      if (result.success) {
+        setSubmitStatus('success');
+        setSubmitMessage('Thank you! Your application has been submitted successfully. We will contact you within 24-48 hours.');
+        
+        // Reset form
+        setFormData({
+          name: '',
+          company: '',
+          email: '',
+          phone: '',
+          capsCertified: '',
+          experience: '',
+          message: ''
+        });
+      } else {
+        setSubmitStatus('error');
+        setSubmitMessage(result.message || 'There was an error submitting your application. Please try again.');
+      }
+    } catch (error) {
+      setSubmitStatus('error');
+      setSubmitMessage('There was an error submitting your application. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -31,32 +93,100 @@ const ContractorsPage: React.FC = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="w-full bg-black flex items-center justify-center p-0 m-0" style={{ minHeight: '320px' }}>
+      <section className="w-full bg-black flex items-center justify-center p-0 m-0 md:min-h-[320px]">
         <img 
           src="/logo card.webp" 
           alt="HOMEase Solutions Logo" 
-          className="w-full h-auto object-contain p-0 m-0"
+          className="w-full h-auto object-contain"
           style={{ display: 'block' }}
         />
       </section>
 
-      {/* Dashboard Mockups Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">Your Contractor Dashboard, Anywhere</h2>
-          <div className="flex flex-col md:flex-row items-center justify-center gap-12">
-            {/* Desktop Mockup */}
-            <div className="flex flex-col items-center w-full md:w-1/2">
-              {/* Laptop Frame */}
-              <div className="relative w-full max-w-xl mx-auto">
-                {/* Laptop Bezel */}
-                <div className="bg-gray-900 rounded-t-3xl rounded-b-xl shadow-2xl border-4 border-gray-800 overflow-hidden relative" style={{ height: '340px' }}>
-                  {/* Camera */}
-                  <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-gray-700 rounded-full z-10"></div>
+      {/* Unified Hero + App Preview Section */}
+      <section className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-20 px-4">
+        <div className="container mx-auto max-w-6xl lg:max-w-7xl xl:max-w-8xl 2xl:max-w-9xl">
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Headline, Subheadline, Download Badges */}
+            <div className="space-y-8">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+                Grow Your <span className="text-blue-600">Business</span> with Qualified Home Safety Leads
+              </h1>
+              <p className="text-xl text-gray-600 leading-relaxed">
+                Connect with homeowners who are ready to invest in their safety. Our AI-powered platform provides detailed measurements and project scopes, making it easier to deliver accurate quotes and win more projects.
+              </p>
+              
+              {/* Available Soon Badge */}
+              <div className="bg-blue-600 text-white rounded-full px-6 py-2 mb-4 inline-block">
+                <span className="font-semibold text-sm">AVAILABLE SOON</span>
+              </div>
+              
+              {/* Download Buttons */}
+              <div className="flex flex-row gap-4">
+                <a href="#">
+                  <img src="/download apple.png" alt="Download on the App Store" className="h-12 w-auto bg-transparent" />
+                </a>
+                <a href="#">
+                  <img src="/google download.png" alt="Get it on Google Play" className="h-12 w-auto bg-transparent object-cover" />
+                </a>
+              </div>
+            </div>
+            {/* Right: iPhone Mockup */}
+            <div className="flex justify-center">
+              {/* iPhone Frame */}
+              <div className="w-64 md:w-72 h-[500px] md:h-[600px] bg-black rounded-[2rem] md:rounded-[3rem] p-2 border border-gray-300">
+                {/* Screen */}
+                <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden">
+                  {/* Status Bar */}
+                  <div className="bg-black text-white px-6 py-2 flex justify-between items-center text-xs font-medium">
+                    <span>9:41</span>
+                    <div className="flex items-center space-x-1">
+                      <div className="w-4 h-2 bg-white rounded-sm"></div>
+                      <div className="w-1 h-2 bg-white rounded-sm"></div>
+                      <div className="w-1 h-2 bg-white rounded-sm"></div>
+                      <div className="w-1 h-2 bg-white rounded-sm"></div>
+                    </div>
+                  </div>
+                  {/* App Content */}
+                  <div className="bg-blue-600 h-full flex flex-col items-center justify-center p-6">
+                    {/* App Logo */}
+                    <div className="w-20 h-20 bg-white bg-opacity-20 rounded-3xl flex items-center justify-center mb-6">
+                      <span className="text-white font-bold text-lg">HE | AI</span>
+                    </div>
+                    
+                    {/* App Name */}
+                    <h3 className="text-2xl font-bold text-white mb-2">HOMEase</h3>
+                    <p className="text-sm text-white opacity-90 mb-8">Contractor Dashboard</p>
+                    
+                    {/* Coming Soon Badge */}
+                    <div className="bg-white bg-opacity-20 rounded-full px-6 py-2 mb-6">
+                      <span className="text-white font-semibold text-sm">COMING SOON</span>
+                    </div>
+                    
+                    {/* Description */}
+                    <p className="text-white text-center text-sm opacity-90 leading-relaxed max-w-48">
+                      Connect with qualified leads and get detailed project measurements
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Desktop Monitor Mockup */}
+          <div className="mt-16 flex justify-center">
+            <div className="flex flex-col items-center">
+              {/* Monitor Frame */}
+              <div className="relative w-full max-w-4xl mx-auto">
+                {/* Monitor Screen */}
+                <div className="bg-gray-900 rounded-lg border-8 border-gray-700 overflow-hidden relative h-80 md:h-96 lg:h-[480px] shadow-2xl">
+                  {/* Monitor Bezel */}
+                  <div className="absolute inset-0 border-4 border-gray-600 rounded-lg pointer-events-none"></div>
+                  
                   {/* Fake Dashboard Content */}
                   <div className="flex h-full">
                     {/* Sidebar */}
-                    <div className="w-16 bg-gradient-to-b from-blue-700 to-blue-900 flex flex-col items-center py-6 space-y-8">
+                    <div className="w-16 bg-blue-800 flex flex-col items-center py-6 space-y-8">
                       <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
                         {/* Leads Icon */}
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -78,252 +208,106 @@ const ContractorsPage: React.FC = () => {
                       </div>
                     </div>
                     {/* Main Content */}
-                    <div className="flex-1 bg-gradient-to-br from-blue-50 to-blue-200 p-6 flex flex-col">
-                      {/* Header */}
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">HE</div>
-                          <span className="font-bold text-lg text-gray-800">HOMEase Contractor</span>
-                        </div>
-                        <span className="text-sm text-gray-500">Dashboard</span>
+                    <div className="flex-1 bg-blue-600 flex flex-col items-center justify-center p-12">
+                      {/* App Logo */}
+                      <div className="w-32 h-32 bg-white bg-opacity-20 rounded-3xl flex items-center justify-center mb-8">
+                        <span className="text-white font-bold text-2xl">HE | AI</span>
                       </div>
-                      {/* Leads Table */}
-                      <div className="bg-white rounded-xl shadow p-4 mb-4 flex-1 overflow-auto">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-semibold text-gray-800 flex items-center gap-2">
-                            {/* Leads Icon */}
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 7V6a2 2 0 012-2h2a2 2 0 012 2v1m10 0V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v1m-6 0h16m-2 0v10a2 2 0 01-2 2H7a2 2 0 01-2-2V7m2 0v10m10-10v10" />
-                            </svg>
-                            Leads
-                          </span>
-                          <span className="text-xs bg-green-500/80 text-white rounded px-2 py-0.5">2 New</span>
-                        </div>
-                        <table className="w-full text-sm text-left">
-                          <thead>
-                            <tr className="text-gray-500">
-                              <th className="py-1 pr-2">Name</th>
-                              <th className="py-1 pr-2">Project</th>
-                              <th className="py-1 pr-2">Status</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr className="bg-blue-50">
-                              <td className="py-1 pr-2 font-bold text-gray-800">Jane Smith</td>
-                              <td className="py-1 pr-2">Bathroom Remodel</td>
-                              <td className="py-1 pr-2 text-green-600">Ready to Start</td>
-                            </tr>
-                            <tr>
-                              <td className="py-1 pr-2 font-bold text-gray-800">Mike Lee</td>
-                              <td className="py-1 pr-2">Ramp Installation</td>
-                              <td className="py-1 pr-2 text-yellow-600">Awaiting Reply</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      {/* Earnings Summary */}
-                      <div className="bg-blue-600 rounded-xl text-white p-4 flex items-center justify-between">
-                        <div>
-                          <span className="block text-xs opacity-80 flex items-center gap-1">
-                            {/* Earnings Icon */}
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 0V4m0 7v7m0 0h4m-4 0H8" />
-                            </svg>
-                            Earnings This Month
-                          </span>
-                          <span className="text-2xl font-bold">$2,450</span>
-                        </div>
-                        <span className="bg-white/20 rounded px-2 py-1 text-sm">View Details</span>
+                      
+                      {/* App Name */}
+                      <h3 className="text-4xl font-bold text-white mb-4">HOMEase</h3>
+                      <p className="text-lg text-white opacity-90 mb-12">Contractor Dashboard</p>
+                      
+                      {/* Coming Soon Badge */}
+                      <div className="bg-white bg-opacity-20 rounded-full px-8 py-3 mb-8">
+                        <span className="text-white font-semibold text-lg">COMING SOON</span>
                       </div>
                     </div>
                   </div>
                 </div>
-                {/* Laptop Base */}
-                <div className="w-full h-4 bg-gray-800 rounded-b-3xl mx-auto -mt-2 shadow-inner"></div>
+                {/* Monitor Stand */}
+                <div className="flex justify-center">
+                  <div className="w-32 h-8 bg-gray-700 rounded-t-lg"></div>
               </div>
-              <p className="mt-4 text-gray-600 text-center text-sm">Full-featured dashboard for managing leads, projects, and communication.</p>
-            </div>
-            {/* Mobile Mockup */}
-            <div className="flex flex-col items-center w-full md:w-1/3">
-              <div className="relative flex justify-center">
-                {/* iPhone Frame - exact match to homepage */}
-                <div className="relative w-64 md:w-72 h-[500px] md:h-[600px] bg-black rounded-[2rem] md:rounded-[3rem] p-2 shadow-2xl">
-                  {/* Screen */}
-                  <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden relative">
-                    {/* Status Bar */}
-                    <div className="bg-black text-white px-6 py-2 flex justify-between items-center text-xs font-medium">
-                      <span>9:41</span>
-                      <div className="flex items-center space-x-1">
-                        <div className="w-4 h-2 bg-white rounded-sm"></div>
-                        <div className="w-1 h-2 bg-white rounded-sm"></div>
-                        <div className="w-1 h-2 bg-white rounded-sm"></div>
-                        <div className="w-1 h-2 bg-white rounded-sm"></div>
-                      </div>
-                    </div>
-                    {/* App Content: Fake Contractor Dashboard */}
-                    <div className="h-full flex flex-col bg-gradient-to-br from-blue-500 to-blue-700">
-                      {/* App Header */}
-                      <div className="text-center text-white mb-4 mt-2">
-                        <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-2">
-                          <span className="text-white font-bold text-lg">HE</span>
-                        </div>
-                        <h3 className="text-lg font-bold mb-1">HOMEase Contractor</h3>
-                        <p className="text-xs opacity-90">Dashboard</p>
-                      </div>
-                      {/* Leads Section */}
-                      <div className="flex-1 px-3 space-y-2 overflow-y-auto">
-                        <div className="bg-white/20 backdrop-blur-sm rounded-xl p-2 text-white flex flex-col">
-                          <div className="flex justify-between items-center mb-1">
-                            <span className="font-semibold">Leads</span>
-                            <span className="text-xs bg-green-500/80 rounded px-2 py-0.5">2 New</span>
-                          </div>
-                          <div className="space-y-1">
-                            <div className="bg-white/30 rounded p-2 flex flex-col text-xs">
-                              <span className="font-bold">Jane Smith</span>
-                              <span>Bathroom Remodel</span>
-                              <span className="text-green-200">Ready to Start</span>
-                            </div>
-                            <div className="bg-white/30 rounded p-2 flex flex-col text-xs">
-                              <span className="font-bold">Mike Lee</span>
-                              <span>Ramp Installation</span>
-                              <span className="text-yellow-200">Awaiting Reply</span>
-                            </div>
-                          </div>
-                        </div>
-                        {/* Earnings Section */}
-                        <div className="bg-white/20 backdrop-blur-sm rounded-xl p-2 text-white flex flex-col mt-2">
-                          <span className="font-semibold mb-1">Earnings</span>
-                          <span className="text-2xl font-bold">$2,450</span>
-                          <span className="text-xs opacity-80">This Month</span>
-                        </div>
-                      </div>
-                      {/* Bottom Navigation */}
-                      <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-2 flex justify-around mt-2">
-                        <div className="flex flex-col items-center">
-                          <div className="w-6 h-6 bg-white/30 rounded-lg mb-1 flex items-center justify-center">
-                            {/* Leads Icon */}
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 7V6a2 2 0 012-2h2a2 2 0 012 2v1m10 0V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v1m-6 0h16m-2 0v10a2 2 0 01-2 2H7a2 2 0 01-2-2V7m2 0v10m10-10v10" />
-                            </svg>
-                          </div>
-                          <span className="text-[10px] text-white">Leads</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                          <div className="w-6 h-6 bg-white/30 rounded-lg mb-1 flex items-center justify-center">
-                            {/* Earnings Icon */}
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 0V4m0 7v7m0 0h4m-4 0H8" />
-                            </svg>
-                          </div>
-                          <span className="text-[10px] text-white">Earnings</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                          <div className="w-6 h-6 bg-white/30 rounded-lg mb-1 flex items-center justify-center">
-                            {/* Profile Icon */}
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A9 9 0 1112 21a9 9 0 01-6.879-3.196z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                          </div>
-                          <span className="text-[10px] text-white">Profile</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Home Button */}
-                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-gray-400 rounded-full"></div>
+                {/* Monitor Base */}
+                <div className="flex justify-center">
+                  <div className="w-48 h-4 bg-gray-700 rounded-lg shadow-lg"></div>
                 </div>
-                {/* Subtle Shadow */}
-                <div className="absolute -bottom-4 w-72 h-4 bg-black/20 rounded-full blur-xl"></div>
               </div>
-              <p className="mt-4 text-gray-600 text-center text-sm">Manage your business on the go with our mobile app.</p>
+              <p className="mt-4 text-gray-600 text-center text-sm">Full-featured desktop dashboard for managing leads, projects, and communication. Access from any browser on your computer.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Download App Section */}
-      <section className="py-8 bg-gray-50">
-        <div className="flex justify-center">
-          <div className="flex flex-row gap-4">
-            <button className="transition-all duration-300 transform hover:scale-105">
-              <img src="/download apple.png" alt="Download on the App Store" className="h-12 w-auto bg-transparent" />
-            </button>
-            <button className="transition-all duration-300 transform hover:scale-105">
-              <img src="/google download.png" alt="Get it on Google Play" className="h-12 w-auto bg-transparent object-cover" />
-            </button>
-          </div>
-        </div>
-      </section>
 
-      {/* Full-width Contractor Image Section */}
-      <section className="w-full">
-        <img 
-          src="/contractor.webp" 
-          alt="Contractor working on home modification" 
-          className="w-full h-auto object-cover block"
-          style={{ maxHeight: '480px' }}
-        />
-      </section>
+
+
 
       {/* How It Works for Contractors Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-5xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">How It Works for Contractors</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <section className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-16">How It Works for Contractors</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* STEP ONE */}
             <div className="flex flex-col items-center text-center">
-              <div className="w-full max-w-xs h-40 mb-4 rounded-xl border-2 border-blue-200 shadow overflow-hidden">
+              <div className="w-full max-w-xs h-48 mb-6 rounded-xl border-2 border-blue-200 overflow-hidden shadow-lg">
                 <img src="/step 1.webp" alt="Step 1 - Upload Room Photo" className="w-full h-full object-cover" />
               </div>
+              <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">1</div>
               <h3 className="font-bold text-lg mb-2">STEP ONE</h3>
               <p className="font-semibold mb-1">UPLOAD ROOM PHOTO</p>
-              <p className="text-gray-600">User uploads room photo using app.</p>
+              <p className="text-gray-600 leading-relaxed">User uploads room photo using app.</p>
             </div>
             {/* STEP TWO */}
             <div className="flex flex-col items-center text-center">
-              <div className="w-full max-w-xs h-40 mb-4 rounded-xl border-2 border-blue-200 shadow overflow-hidden">
+              <div className="w-full max-w-xs h-48 mb-6 rounded-xl border-2 border-blue-200 overflow-hidden shadow-lg">
                 <img src="/step 2.webp" alt="Step 2 - AI Analysis" className="w-full h-full object-cover" />
               </div>
+              <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">2</div>
               <h3 className="font-bold text-lg mb-2">STEP TWO</h3>
               <p className="font-semibold mb-1">AI ANALYSIS</p>
-              <p className="text-gray-600">AI + AR analyze photo and provide ADA recommendations.</p>
+              <p className="text-gray-600 leading-relaxed">AI + AR analyze photo and provide ADA recommendations.</p>
             </div>
             {/* STEP THREE */}
             <div className="flex flex-col items-center text-center">
-              <div className="w-full max-w-xs h-40 mb-4 rounded-xl border-2 border-blue-200 shadow overflow-hidden">
+              <div className="w-full max-w-xs h-48 mb-6 rounded-xl border-2 border-blue-200 overflow-hidden shadow-lg">
                 <img src="/step 3.webp" alt="Step 3 - Lead Qualification" className="w-full h-full object-cover" />
               </div>
+              <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">3</div>
               <h3 className="font-bold text-lg mb-2">STEP THREE</h3>
               <p className="font-semibold mb-1">LEAD QUALIFICATION</p>
-              <p className="text-gray-600">Capture user info, scope of work and preferences.</p>
+              <p className="text-gray-600 leading-relaxed">Capture user info, scope of work and preferences.</p>
             </div>
             {/* STEP FOUR */}
             <div className="flex flex-col items-center text-center">
-              <div className="w-full max-w-xs h-40 mb-4 rounded-xl border-2 border-blue-200 shadow overflow-hidden">
+              <div className="w-full max-w-xs h-48 mb-6 rounded-xl border-2 border-blue-200 overflow-hidden shadow-lg">
                 <img src="/step 4.webp" alt="Step 4 - Contractor Matching" className="w-full h-full object-cover" />
               </div>
+              <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">4</div>
               <h3 className="font-bold text-lg mb-2">STEP FOUR</h3>
               <p className="font-semibold mb-1">CONTRACTOR MATCHING</p>
-              <p className="text-gray-600">User sends report to qualified local contractor for bid.</p>
+              <p className="text-gray-600 leading-relaxed">User sends report to qualified local contractor for bid.</p>
             </div>
             {/* STEP FIVE */}
             <div className="flex flex-col items-center text-center">
-              <div className="w-full max-w-xs h-40 mb-4 rounded-xl border-2 border-blue-200 shadow overflow-hidden">
+              <div className="w-full max-w-xs h-48 mb-6 rounded-xl border-2 border-blue-200 overflow-hidden shadow-lg">
                 <img src="/step 5.webp" alt="Step 5 - Lead Purchase" className="w-full h-full object-cover" />
               </div>
+              <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">5</div>
               <h3 className="font-bold text-lg mb-2">STEP FIVE</h3>
               <p className="font-semibold mb-1">LEAD PURCHASE</p>
-              <p className="text-gray-600">Contractor purchases lead.</p>
+              <p className="text-gray-600 leading-relaxed">Contractor purchases lead.</p>
             </div>
             {/* STEP SIX */}
             <div className="flex flex-col items-center text-center">
-              <div className="w-full max-w-xs h-40 mb-4 rounded-xl border-2 border-blue-200 shadow overflow-hidden">
+              <div className="w-full max-w-xs h-48 mb-6 rounded-xl border-2 border-blue-200 overflow-hidden shadow-lg">
                 <img src="/step 6.webp" alt="Step 6 - Customer Contact" className="w-full h-full object-cover" />
               </div>
+              <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">6</div>
               <h3 className="font-bold text-lg mb-2">STEP SIX</h3>
               <p className="font-semibold mb-1">CUSTOMER CONTACT</p>
-              <p className="text-gray-600">Contractor contacts customer to schedule home modification.</p>
+              <p className="text-gray-600 leading-relaxed">Contractor contacts customer to schedule home modification.</p>
             </div>
           </div>
           {/* AI Measurement Note */}
@@ -391,6 +375,16 @@ const ContractorsPage: React.FC = () => {
         </div>
       </section>
 
+      {/* Full-width Contractor Image Section */}
+      <section className="w-full">
+        <img 
+          src="/contractor.webp" 
+          alt="Contractor working on home modification" 
+          className="w-full h-auto object-cover block md:h-[500px] lg:h-[800px]"
+          style={{ maxHeight: '800px' }}
+        />
+      </section>
+
       {/* Services We Work With */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -405,7 +399,7 @@ const ContractorsPage: React.FC = () => {
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {/* Service: Grab Bar Installation */}
-            <div className="bg-white rounded-lg p-4 flex items-center gap-3 text-center shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-lg p-4 flex items-center gap-3 text-center border border-gray-200">
               {/* Hand Icon */}
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M7 11V5a2 2 0 114 0v6m0 0V5a2 2 0 114 0v6m-8 4h12a2 2 0 002-2v-2a2 2 0 00-2-2H5a2 2 0 00-2 2v2a2 2 0 002 2z" />
@@ -413,7 +407,7 @@ const ContractorsPage: React.FC = () => {
               <p className="text-gray-700 font-medium">Grab Bar Installation</p>
             </div>
             {/* Service: Ramp Construction */}
-            <div className="bg-white rounded-lg p-4 flex items-center gap-3 text-center shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-lg p-4 flex items-center gap-3 text-center border border-gray-200">
               {/* Trending Up Icon (Ramp) */}
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 17l6-6 4 4 8-8" />
@@ -421,7 +415,7 @@ const ContractorsPage: React.FC = () => {
               <p className="text-gray-700 font-medium">Ramp Construction</p>
             </div>
             {/* Service: Door Widening */}
-            <div className="bg-white rounded-lg p-4 flex items-center gap-3 text-center shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-lg p-4 flex items-center gap-3 text-center border border-gray-200">
               {/* Door Icon */}
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v18m0 0H6a2 2 0 01-2-2V5a2 2 0 012-2h6zm0 0h6a2 2 0 012 2v14a2 2 0 01-2 2h-6z" />
@@ -429,7 +423,7 @@ const ContractorsPage: React.FC = () => {
               <p className="text-gray-700 font-medium">Door Widening</p>
             </div>
             {/* Service: Bathroom Remodeling */}
-            <div className="bg-white rounded-lg p-4 flex items-center gap-3 text-center shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-lg p-4 flex items-center gap-3 text-center border border-gray-200">
               {/* Sparkles Icon (Remodel) */}
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -437,7 +431,7 @@ const ContractorsPage: React.FC = () => {
               <p className="text-gray-700 font-medium">Bathroom Remodeling</p>
             </div>
             {/* Service: Stair Modifications */}
-            <div className="bg-white rounded-lg p-4 flex items-center gap-3 text-center shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-lg p-4 flex items-center gap-3 text-center border border-gray-200">
               {/* Stairs Icon (Chevron Up) */}
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
@@ -445,7 +439,7 @@ const ContractorsPage: React.FC = () => {
               <p className="text-gray-700 font-medium">Stair Modifications</p>
             </div>
             {/* Service: Kitchen Accessibility */}
-            <div className="bg-white rounded-lg p-4 flex items-center gap-3 text-center shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-lg p-4 flex items-center gap-3 text-center border border-gray-200">
               {/* Kitchen Icon (Cube) */}
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M20 21V7a2 2 0 00-2-2H6a2 2 0 00-2 2v14m16 0H4m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2" />
@@ -453,7 +447,7 @@ const ContractorsPage: React.FC = () => {
               <p className="text-gray-700 font-medium">Kitchen Accessibility</p>
             </div>
             {/* Service: Lighting Improvements */}
-            <div className="bg-white rounded-lg p-4 flex items-center gap-3 text-center shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-lg p-4 flex items-center gap-3 text-center border border-gray-200">
               {/* Light Bulb Icon */}
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m8-9a8 8 0 11-16 0 8 8 0 0116 0z" />
@@ -461,7 +455,7 @@ const ContractorsPage: React.FC = () => {
               <p className="text-gray-700 font-medium">Lighting Improvements</p>
             </div>
             {/* Service: Flooring & Safety */}
-            <div className="bg-white rounded-lg p-4 flex items-center gap-3 text-center shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-lg p-4 flex items-center gap-3 text-center border border-gray-200">
               {/* Shield Check Icon */}
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m1-5.618a2 2 0 00-2.632-1.18l-6.857 2.857A2 2 0 004 6.382V17.618a2 2 0 002.632 1.18l6.857-2.857A2 2 0 0020 17.618V6.382a2 2 0 00-1.18-1.816z" />
@@ -547,25 +541,19 @@ const ContractorsPage: React.FC = () => {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Primary Service *
+                Are you CAPS certified? *
               </label>
               <select
-                name="service"
-                value={formData.service}
+                name="capsCertified"
+                value={formData.capsCertified}
                 onChange={handleInputChange}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="">Select your primary service</option>
-                <option value="grab-bars">Grab Bar Installation</option>
-                <option value="ramps">Ramp Construction</option>
-                <option value="doors">Door Widening</option>
-                <option value="bathroom">Bathroom Remodeling</option>
-                <option value="stairs">Stair Modifications</option>
-                <option value="kitchen">Kitchen Accessibility</option>
-                <option value="lighting">Lighting Improvements</option>
-                <option value="flooring">Flooring & Safety</option>
-                <option value="other">Other</option>
+                <option value="">Select your CAPS certification status</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+                <option value="No but willing to apply">No but willing to apply</option>
               </select>
             </div>
             
@@ -602,12 +590,50 @@ const ContractorsPage: React.FC = () => {
               />
             </div>
             
+            {/* Submit Status Messages */}
+            {submitStatus === 'success' && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-green-800 font-medium">{submitMessage}</p>
+                </div>
+              </div>
+            )}
+
+            {submitStatus === 'error' && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 text-red-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-red-800 font-medium">{submitMessage}</p>
+                </div>
+              </div>
+            )}
+            
             <div className="text-center">
               <button
                 type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105"
+                disabled={isSubmitting}
+                className={`font-semibold py-3 px-8 rounded-lg transition-all duration-300 ${
+                  isSubmitting 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-blue-600 hover:bg-blue-700'
+                } text-white`}
               >
-                Submit Application
+                {isSubmitting ? (
+                  <div className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Submitting...
+                  </div>
+                ) : (
+                  'Submit Application'
+                )}
           </button>
             </div>
           </form>
@@ -668,10 +694,10 @@ const ContractorsPage: React.FC = () => {
                 answer: "You can reach our support team directly through the app or visit our 'Contact Us' page for phone and email support options."
               }
             ].map((faq, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300">
+              <div key={index} className="bg-white rounded-xl border border-gray-200">
                 <button
                   type="button"
-                  className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200"
+                  className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50"
                   onClick={() => {
                     const element = document.getElementById(`contractor-faq-${index}`);
                     if (element) {
@@ -680,7 +706,7 @@ const ContractorsPage: React.FC = () => {
                   }}
                 >
                   <span className="font-semibold text-gray-900 text-lg">{faq.question}</span>
-                  <span className="text-blue-600 text-2xl transform transition-transform duration-200">+</span>
+                  <span className="text-blue-600 text-2xl">+</span>
                 </button>
                 <div id={`contractor-faq-${index}`} className="hidden px-6 pb-4">
                   <p className="text-gray-600 leading-relaxed">{faq.answer}</p>

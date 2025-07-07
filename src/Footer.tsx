@@ -1,7 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import CookiePreferences from './components/CookiePreferences';
 
 const Footer: React.FC = () => {
+  const [showCookiePreferences, setShowCookiePreferences] = useState(false);
+
+  const handleConsentChange = (preferences: {
+    analytics: boolean;
+    marketing: boolean;
+    necessary: boolean;
+  }) => {
+    // This will be handled by the parent App component
+    window.location.reload(); // Reload to apply new consent settings
+  };
+
   return (
           <footer className="bg-gray-900 text-white py-16">
         <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
@@ -9,7 +21,7 @@ const Footer: React.FC = () => {
           {/* Company Info & Social */}
           <div className="col-span-1 text-center md:text-left">
                           <div className="flex items-center justify-center md:justify-start mb-4">
-                <img src="/logo.jpg" alt="HOMEase" className="h-8 w-auto mr-3" />
+                <img src="/logo_transparent.png" alt="HOMEase" className="h-8 w-auto mr-3" />
                 <h3 className="text-xl font-bold">HOMEase</h3>
               </div>
 
@@ -21,9 +33,11 @@ const Footer: React.FC = () => {
             <div className="flex justify-center md:justify-start space-x-6">
               {/* Facebook */}
               <a 
-                href="#" 
+                href="https://www.facebook.com/people/HOMEase-Solutions/61575267390743/#" 
                 className="text-gray-400 hover:text-blue-600 transition-all duration-300 transform hover:scale-110"
                 aria-label="Follow us on Facebook"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -80,19 +94,19 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/blog" className="text-gray-300 hover:text-white transition-colors duration-300">
-                  Blog
-                </Link>
-              </li>
-              <li>
                 <Link to="/contact" className="text-gray-300 hover:text-white transition-colors duration-300">
                   Contact
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">
+                <Link to="/blog" className="text-gray-300 hover:text-white transition-colors duration-300">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link to="/contractors" className="text-gray-300 hover:text-white transition-colors duration-300">
                   For Contractors
-                </a>
+                </Link>
               </li>
               <li>
                 <Link to="/investors" className="text-gray-300 hover:text-white transition-colors duration-300">
@@ -134,13 +148,19 @@ const Footer: React.FC = () => {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-8 pt-8">
           <div className="flex flex-col items-center space-y-4 md:space-y-0 md:flex-row md:justify-between">
-            <div className="flex space-x-6">
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors duration-300">
+            <div className="grid grid-cols-3 gap-4 justify-items-center">
+              <a href="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors duration-300">
                 Privacy Policy
               </a>
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors duration-300">
+              <a href="/terms" className="text-gray-400 hover:text-white text-sm transition-colors duration-300">
                 Terms of Service
               </a>
+              <button 
+                onClick={() => setShowCookiePreferences(true)}
+                className="text-gray-400 hover:text-white text-sm transition-colors duration-300"
+              >
+                Cookie Preferences
+              </button>
             </div>
             <p className="text-gray-400 text-sm text-center md:text-left">
               © 2025 HOMEase SOLUTIONS, Inc. - All Rights Reserved.
@@ -148,6 +168,11 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </div>
+      <CookiePreferences 
+        isOpen={showCookiePreferences}
+        onClose={() => setShowCookiePreferences(false)}
+        onConsentChange={handleConsentChange}
+      />
     </footer>
   );
 };
