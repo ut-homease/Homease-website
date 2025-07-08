@@ -815,25 +815,7 @@ function HomePage() {
               ))}
             </div>
             
-            <div className="text-center mt-12 p-8 bg-blue-50 rounded-2xl">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Still have questions?
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Please start a chat or reach us at info@yourhomease.com with additional questions.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
-                  Contact Us
-                </button>
-                <button 
-                  onClick={() => setShowChat(true)}
-                  className="bg-white hover:bg-gray-50 text-blue-600 font-semibold py-3 px-6 rounded-lg border-2 border-blue-600 transition-all duration-300 transform hover:scale-105"
-                >
-                  Start Chat
-                </button>
-              </div>
-            </div>
+
           </div>
         </section>
 
