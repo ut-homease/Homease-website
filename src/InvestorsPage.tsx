@@ -100,13 +100,13 @@ const InvestorsPage: React.FC = () => {
       {activeTab === 'overview' && (
         <section className="py-16 bg-gray-50">
           <div className="max-w-6xl mx-auto px-4">
-            <div className="text-center mb-12">
+          <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-6">Investment Opportunity</h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8">
                 HOMEase|AI is seeking $500K in seed funding to accelerate our AR-powered lead generation platform for the $105.8B home modification market.
-              </p>
-            </div>
-            
+            </p>
+          </div>
+          
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
               <div className="bg-white rounded-2xl p-8 text-center shadow-lg hover:shadow-xl transition-shadow duration-200">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -202,7 +202,7 @@ const InvestorsPage: React.FC = () => {
                   <div className="bg-blue-50 rounded-xl p-6 hover:bg-blue-100 transition-colors duration-200">
                     <h4 className="font-bold text-lg mb-2">Demographics</h4>
                     <ul className="space-y-2 text-gray-700">
-                      <li>• 10,000+ Americans turn 65 daily</li>
+                <li>• 10,000+ Americans turn 65 daily</li>
                       <li>• 9 in 10 prefer to age in place</li>
                       <li>• 4M+ households over 65 face safety risks</li>
                     </ul>
@@ -213,7 +213,7 @@ const InvestorsPage: React.FC = () => {
                       <li>• Medicare Advantage supports AIP</li>
                       <li>• Contractors lack AIP-focused leads</li>
                       <li>• Seniors comfortable with digital tools</li>
-                    </ul>
+              </ul>
                   </div>
                 </div>
               </div>
@@ -243,7 +243,7 @@ const InvestorsPage: React.FC = () => {
               
               <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-200">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Contractor Tools</h3>
-                <ul className="space-y-3 text-gray-700">
+              <ul className="space-y-3 text-gray-700">
                   <li>• Performance dashboards</li>
                   <li>• Lead conversion data</li>
                   <li>• Dynamic scope-builder</li>
@@ -269,7 +269,7 @@ const InvestorsPage: React.FC = () => {
                     <li>• High-quality leads</li>
                     <li>• Reduced marketing cost</li>
                     <li>• Higher ROI per job</li>
-                  </ul>
+              </ul>
                 </div>
               </div>
             </div>
@@ -283,8 +283,8 @@ const InvestorsPage: React.FC = () => {
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-6">Financial Model</h2>
-            </div>
-            
+          </div>
+          
             <div className="bg-blue-50 rounded-2xl p-8 mb-8">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Current Status</h3>
               <p className="text-gray-700 mb-6">

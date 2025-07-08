@@ -111,28 +111,28 @@ const Header: React.FC = () => {
               
               {/* Navigation Links */}
               <div className="flex flex-col p-6 space-y-2">
-                <Link 
-                  to="/" 
+              <Link 
+                to="/" 
                   className={`font-medium py-4 px-4 rounded-xl transition-all duration-300 ${
-                    isActive('/') 
+                  isActive('/') 
                       ? 'text-blue-400 bg-gray-800 shadow-lg' 
                       : 'text-gray-300 hover:text-white hover:bg-gray-800'
-                  }`}
-                  onClick={() => setShowMobileMenu(false)}
-                >
-                  Home
-                </Link>
-                <Link 
-                  to="/about" 
+                }`}
+                onClick={() => setShowMobileMenu(false)}
+              >
+                Home
+              </Link>
+              <Link 
+                to="/about" 
                   className={`font-medium py-4 px-4 rounded-xl transition-all duration-300 ${
-                    isActive('/about') 
+                  isActive('/about') 
                       ? 'text-blue-400 bg-gray-800 shadow-lg' 
                       : 'text-gray-300 hover:text-white hover:bg-gray-800'
-                  }`}
-                  onClick={() => setShowMobileMenu(false)}
-                >
-                  About
-                </Link>
+                }`}
+                onClick={() => setShowMobileMenu(false)}
+              >
+                About
+              </Link>
                 <Link 
                   to="/contact" 
                   className={`font-medium py-4 px-4 rounded-xl transition-all duration-300 ${
@@ -144,25 +144,25 @@ const Header: React.FC = () => {
                 >
                   Contact
                 </Link>
-                <Link 
-                  to="/blog" 
+              <Link 
+                to="/blog" 
                   className={`font-medium py-4 px-4 rounded-xl transition-all duration-300 ${
-                    isActive('/blog') 
+                  isActive('/blog') 
                       ? 'text-blue-400 bg-gray-800 shadow-lg' 
                       : 'text-gray-300 hover:text-white hover:bg-gray-800'
-                  }`}
-                  onClick={() => setShowMobileMenu(false)}
-                >
-                  Blog
-                </Link>
-                <Link 
-                  to="/contractors" 
+                }`}
+                onClick={() => setShowMobileMenu(false)}
+              >
+                Blog
+              </Link>
+              <Link 
+                to="/contractors" 
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 font-medium text-center block shadow-lg"
-                  onClick={() => setShowMobileMenu(false)}
-                >
-                  For Contractors
-                </Link>
-              </div>
+                onClick={() => setShowMobileMenu(false)}
+              >
+                For Contractors
+              </Link>
+            </div>
               
               {/* Contact Section */}
               <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-700">
@@ -185,7 +185,7 @@ const Header: React.FC = () => {
                   </a>
                 </div>
               </div>
-            </div>
+          </div>
           </>
         )}
       </div>

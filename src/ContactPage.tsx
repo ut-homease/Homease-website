@@ -37,7 +37,7 @@ const ContactPage: React.FC = () => {
       // Add form type identifier
       formDataToSend.append('formType', 'contact');
 
-      const response = await fetch('https://script.google.com/macros/s/AKfycbwHIrOHVGaHhcx9v5Tx8NQTQ6Wrx3buxbUrXHTpjGQKHr0PvA_gscKTkUWC5V8UtCRDKA/exec', {
+      const response = await fetch('https://script.google.com/macros/s/AKfycbzTbpE5I7shAqam9i8Hcxu7fpDBPZp_PY8nOyekco4ivb8lPpsahQz_-tNrpc2Dl88kYw/exec', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -107,14 +107,14 @@ const ContactPage: React.FC = () => {
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              Get in Touch
-            </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              We're here to help you with any questions about HOMEase.
-            </p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+            Get in Touch
+          </h2>
+          <p className="text-xl text-gray-600 mb-8">
+            We're here to help you with any questions about HOMEase.
+          </p>
             <div className="space-y-4 mb-8">
-              <p className="text-gray-700">Email: info@yourhomease.com</p>
+            <p className="text-gray-700">Email: info@yourhomease.com</p>
             </div>
           </div>
 

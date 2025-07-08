@@ -37,7 +37,7 @@ const ContractorsPage: React.FC = () => {
         formDataToSend.append(key, value);
       });
 
-      const response = await fetch('https://script.google.com/macros/s/AKfycbwHIrOHVGaHhcx9v5Tx8NQTQ6Wrx3buxbUrXHTpjGQKHr0PvA_gscKTkUWC5V8UtCRDKA/exec', {
+      const response = await fetch('https://script.google.com/macros/s/AKfycbzTbpE5I7shAqam9i8Hcxu7fpDBPZp_PY8nOyekco4ivb8lPpsahQz_-tNrpc2Dl88kYw/exec', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

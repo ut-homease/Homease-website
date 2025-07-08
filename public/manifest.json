@@ -4,18 +4,18 @@
   "description": "AI-powered home safety assessments for aging-in-place modifications",
   "icons": [
     {
-      "src": "logo_transparent.png",
+      "src": "favicon.jpg",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/png"
+      "type": "image/jpeg"
     },
     {
-      "src": "logo_transparent.png",
-      "type": "image/png",
+      "src": "favicon.jpg",
+      "type": "image/jpeg",
       "sizes": "192x192"
     },
     {
-      "src": "logo_transparent.png",
-      "type": "image/png",
+      "src": "favicon.jpg",
+      "type": "image/jpeg",
       "sizes": "512x512"
     }
   ],

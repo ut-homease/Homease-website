@@ -74,48 +74,319 @@ function PageTracker() {
 }
 
 function HomePage() {
-  const [isVisible, setIsVisible] = useState(false);
   const [showChat, setShowChat] = useState(false);
-
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [userPath, setUserPath] = useState<string[]>([]);
+  const [questionHistory, setQuestionHistory] = useState<number[]>([]);
   const [chatMessages, setChatMessages] = useState([
     { id: 1, text: "Hi! I'm here to help with any questions about HOMEase. How can I assist you today?", sender: 'bot', timestamp: new Date() }
   ]);
-  const [newMessage, setNewMessage] = useState('');
+
+  // Question tree structure
+  interface QuestionOption {
+    text: string;
+    path: string;
+  }
+
+  interface QuestionNode {
+    question: string;
+    options: QuestionOption[];
+    condition?: string;
+  }
+
+  const questionTree: Record<number, QuestionNode> = {
+    0: {
+      question: "Hello! I'm here to help. Who are you?",
+      options: [
+        { text: "I need home safety services", path: "service-needer" },
+        { text: "I'm a healthcare provider", path: "provider" },
+        { text: "I'm a contractor", path: "contractor" }
+      ]
+    },
+    1: {
+      question: "Great! What type of home safety service are you looking for?",
+      options: [
+        { text: "Complete home safety assessment", path: "complete-assessment" },
+        { text: "Bathroom safety modifications", path: "bathroom-safety" },
+        { text: "Kitchen accessibility improvements", path: "kitchen-accessibility" },
+        { text: "Fall prevention and mobility", path: "fall-prevention" },
+        { text: "Emergency monitoring systems", path: "emergency-monitoring" }
+      ],
+      condition: "service-needer"
+    },
+    2: {
+      question: "What type of healthcare provider are you?",
+      options: [
+        { text: "Home health nurse", path: "home-health" },
+        { text: "Physical therapist", path: "physical-therapist" },
+        { text: "Occupational therapist", path: "occupational-therapist" },
+        { text: "Case manager", path: "case-manager" },
+        { text: "Other healthcare professional", path: "other-provider" }
+      ],
+      condition: "provider"
+    },
+    10: {
+      question: "How can we help you serve your clients better?",
+      options: [
+        { text: "Home safety assessments for clients", path: "client-assessments" },
+        { text: "Connect clients with qualified contractors", path: "contractor-connections" },
+        { text: "Track client home modification progress", path: "progress-tracking" },
+        { text: "Educational resources for clients", path: "educational-resources" }
+      ],
+      condition: "provider"
+    },
+    3: {
+      question: "What type of contracting work do you do?",
+      options: [
+        { text: "Home modifications", path: "home-modifications" },
+        { text: "General contractor", path: "general-contractor" },
+        { text: "Handyman services", path: "handyman" },
+        { text: "Accessibility specialist", path: "accessibility" },
+        { text: "Other", path: "other-contractor" }
+      ],
+      condition: "contractor"
+    },
+    4: {
+      question: "What would you like to know about our contractor program?",
+      options: [
+        { text: "How to join our network", path: "join-network" },
+        { text: "How lead generation works", path: "lead-generation" },
+        { text: "What services we offer contractors", path: "contractor-services" },
+        { text: "Pricing and lead costs", path: "pricing" },
+        { text: "Contact us directly", path: "contact" }
+      ],
+      condition: "contractor"
+    },
+    5: {
+      question: "Who is this assessment for?",
+      options: [
+        { text: "Myself (I'm over 65)", path: "self-65-plus" },
+        { text: "My parent(s) or grandparent(s)", path: "parent-grandparent" },
+        { text: "My spouse or partner", path: "spouse-partner" },
+        { text: "A family member with mobility needs", path: "family-mobility" },
+        { text: "I'm planning ahead for the future", path: "planning-ahead" }
+      ],
+      condition: "complete-assessment"
+    },
+    6: {
+      question: "What bathroom safety concerns do you have?",
+      options: [
+        { text: "Shower safety and accessibility", path: "shower-safety" },
+        { text: "Toilet accessibility", path: "toilet-accessibility" },
+        { text: "Grab bars and support", path: "grab-bars" },
+        { text: "Slippery surfaces", path: "slippery-surfaces" }
+      ],
+      condition: "bathroom-safety"
+    },
+    7: {
+      question: "What kitchen accessibility issues are you experiencing?",
+      options: [
+        { text: "Counter height adjustments", path: "counter-height" },
+        { text: "Cabinet accessibility", path: "cabinet-accessibility" },
+        { text: "Appliance modifications", path: "appliance-modifications" },
+        { text: "Lighting improvements", path: "kitchen-lighting" }
+      ],
+      condition: "kitchen-accessibility"
+    },
+    8: {
+      question: "What fall prevention or mobility concerns do you have?",
+      options: [
+        { text: "Tripping hazards and loose rugs", path: "tripping-hazards" },
+        { text: "Poor lighting throughout home", path: "poor-lighting" },
+        { text: "Stairs and entryway access", path: "stairs-access" },
+        { text: "Need handrails and support", path: "handrails-support" }
+      ],
+      condition: "fall-prevention"
+    },
+    9: {
+      question: "What type of emergency monitoring are you considering?",
+      options: [
+        { text: "Medical alert system", path: "medical-alert" },
+        { text: "Smart home monitoring", path: "smart-monitoring" },
+        { text: "Fall detection technology", path: "fall-detection" },
+        { text: "Complete safety monitoring", path: "complete-monitoring" }
+      ],
+      condition: "emergency-monitoring"
+    }
+  };
 
   useEffect(() => {
-    setIsVisible(true);
+    // Component mounted
   }, []);
 
-  const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      const userMessage = {
-        id: chatMessages.length + 1,
-        text: newMessage,
-        sender: 'user',
-        timestamp: new Date()
-      };
-      
-      setChatMessages([...chatMessages, userMessage]);
-      setNewMessage('');
-      
-      // Mock bot response
-      setTimeout(() => {
-        const botMessage = {
-          id: chatMessages.length + 2,
-          text: "Thanks for your message! Our team will get back to you soon. In the meantime, you can download our app to get started with your home safety assessment.",
-          sender: 'bot',
-          timestamp: new Date()
-        };
-        setChatMessages(prev => [...prev, botMessage]);
-      }, 1000);
+  const handleOptionSelect = (option: QuestionOption) => {
+    const newPath = [...userPath, option.path];
+    setUserPath(newPath);
+    
+    // Add current question to history
+    setQuestionHistory([...questionHistory, currentQuestion]);
+    
+    // Find next question based on path
+    const nextQuestion = findNextQuestion(newPath);
+    if (nextQuestion !== null) {
+      setCurrentQuestion(nextQuestion);
+    } else {
+      // End of questionnaire - show appropriate response
+      showFinalResponse(newPath);
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSendMessage();
+  const handleBack = () => {
+    if (questionHistory.length > 0) {
+      const previousQuestion = questionHistory[questionHistory.length - 1];
+      const newHistory = questionHistory.slice(0, -1);
+      const newPath = userPath.slice(0, -1);
+      
+      setCurrentQuestion(previousQuestion);
+      setQuestionHistory(newHistory);
+      setUserPath(newPath);
     }
   };
+
+  const findNextQuestion = (path: string[]): number | null => {
+    // Simple logic to determine next question based on path
+    if (path.length === 1) {
+      if (path[0] === "service-needer") return 1;
+      if (path[0] === "provider") return 2;
+      if (path[0] === "contractor") return 4; // Skip to FAQ options
+    }
+    if (path.length === 2) {
+      if (path[0] === "contractor") {
+        return null; // End of questionnaire for contractors
+      }
+      if (path[0] === "service-needer") {
+        // Route to specific follow-up questions based on service type
+        if (path[1] === "complete-assessment") return 5;
+        if (path[1] === "bathroom-safety") return 6;
+        if (path[1] === "kitchen-accessibility") return 7;
+        if (path[1] === "fall-prevention") return 8;
+        if (path[1] === "emergency-monitoring") return 9;
+      }
+      if (path[0] === "provider") {
+        // Route to provider follow-up questions
+        if (path[1] === "home-health" || path[1] === "physical-therapist" || 
+            path[1] === "occupational-therapist" || path[1] === "case-manager" || 
+            path[1] === "other-provider") return 10;
+      }
+    }
+    return null; // End of questionnaire
+  };
+
+  const showFinalResponse = (path: string[]) => {
+    let response = "";
+    
+    if (path.includes("service-needer")) {
+      // Complete Assessment responses
+      if (path.includes("complete-assessment")) {
+        if (path.includes("self-65-plus")) {
+          response = "Perfect! Our AI-powered AR assessment app will help you scan your home and identify safety improvements. When we launch, you'll be able to use your smartphone to create detailed measurements and get personalized recommendations for modifications. Sign up for early access at info@yourhomease.com to be notified when we launch.";
+        } else if (path.includes("parent-grandparent")) {
+          response = "Great! Our platform will help families ensure their loved ones can age safely at home. Our AR app will scan the home and identify specific modifications needed, then connect you with qualified contractors. Sign up for early access at info@yourhomease.com to be notified when we launch.";
+        } else if (path.includes("spouse-partner")) {
+          response = "Excellent! Our comprehensive assessment will help you both maintain independence and safety at home. Our AR technology will scan your entire home and provide personalized recommendations. Sign up for early access at info@yourhomease.com.";
+        } else if (path.includes("family-mobility")) {
+          response = "Our AR assessment is perfect for identifying accessibility needs. We'll scan your home and provide specific recommendations for mobility improvements. Sign up for early access at info@yourhomease.com to be notified when we launch.";
+        } else if (path.includes("planning-ahead")) {
+          response = "Smart planning! Our assessment will help you identify potential safety issues before they become problems. Our AR technology provides detailed measurements and recommendations for future modifications. Sign up for early access at info@yourhomease.com.";
+        }
+      }
+      // Bathroom Safety responses
+      else if (path.includes("bathroom-safety")) {
+        if (path.includes("shower-safety")) {
+          response = "Bathroom safety is crucial! Our AR app will identify specific shower modifications needed, from grab bars to walk-in tubs. We'll provide detailed measurements and connect you with qualified contractors. Sign up for early access at info@yourhomease.com.";
+        } else if (path.includes("toilet-accessibility")) {
+          response = "Toilet accessibility is essential for independence. Our assessment will recommend comfort-height toilets, grab bars, and other modifications. Sign up for early access at info@yourhomease.com to be notified when we launch.";
+        } else if (path.includes("grab-bars")) {
+          response = "Grab bars can prevent falls and provide essential support. Our AR assessment will identify optimal placement and recommend the right type for your needs. Sign up for early access at info@yourhomease.com.";
+        } else if (path.includes("slippery-surfaces")) {
+          response = "Slippery surfaces are a major fall risk. Our assessment will recommend non-slip flooring, shower modifications, and other safety improvements. Sign up for early access at info@yourhomease.com.";
+        }
+      }
+      // Kitchen Accessibility responses
+      else if (path.includes("kitchen-accessibility")) {
+        if (path.includes("counter-height")) {
+          response = "Counter height adjustments can make cooking much safer and easier. Our AR assessment will measure your current setup and recommend optimal heights for your needs. Sign up for early access at info@yourhomease.com.";
+        } else if (path.includes("cabinet-accessibility")) {
+          response = "Accessible cabinets improve independence in the kitchen. Our assessment will recommend pull-down shelves, lazy susans, and other modifications. Sign up for early access at info@yourhomease.com.";
+        } else if (path.includes("appliance-modifications")) {
+          response = "Appliance modifications can make cooking safer and more accessible. Our AR assessment will identify needed changes to ranges, refrigerators, and other appliances. Sign up for early access at info@yourhomease.com.";
+        } else if (path.includes("kitchen-lighting")) {
+          response = "Proper lighting is essential for kitchen safety. Our assessment will identify dark areas and recommend lighting improvements. Sign up for early access at info@yourhomease.com.";
+        }
+      }
+      // Fall Prevention responses
+      else if (path.includes("fall-prevention")) {
+        if (path.includes("tripping-hazards")) {
+          response = "Tripping hazards are a leading cause of falls. Our AR assessment will identify loose rugs, cords, and other hazards throughout your home. Sign up for early access at info@yourhomease.com.";
+        } else if (path.includes("poor-lighting")) {
+          response = "Poor lighting significantly increases fall risk. Our assessment will identify dark areas and recommend lighting improvements throughout your home. Sign up for early access at info@yourhomease.com.";
+        } else if (path.includes("stairs-access")) {
+          response = "Stairs and entryways can become major barriers. Our AR assessment will recommend solutions like stairlifts, ramps, or home elevators based on your specific needs. Sign up for early access at info@yourhomease.com.";
+        } else if (path.includes("handrails-support")) {
+          response = "Handrails provide essential support and prevent falls. Our assessment will identify optimal placement for handrails throughout your home. Sign up for early access at info@yourhomease.com.";
+        }
+      }
+      // Emergency Monitoring responses
+      else if (path.includes("emergency-monitoring")) {
+        if (path.includes("medical-alert")) {
+          response = "Medical alert systems provide peace of mind and quick emergency response. Our assessment will recommend the right system for your needs and lifestyle. Sign up for early access at info@yourhomease.com.";
+        } else if (path.includes("smart-monitoring")) {
+          response = "Smart home monitoring can detect falls and provide 24/7 safety monitoring. Our assessment will recommend smart devices and monitoring systems. Sign up for early access at info@yourhomease.com.";
+        } else if (path.includes("fall-detection")) {
+          response = "Fall detection technology can automatically alert emergency services. Our assessment will recommend the best fall detection system for your home. Sign up for early access at info@yourhomease.com.";
+        } else if (path.includes("complete-monitoring")) {
+          response = "Complete safety monitoring provides comprehensive protection. Our assessment will recommend a full monitoring system for maximum safety and peace of mind. Sign up for early access at info@yourhomease.com.";
+        }
+      }
+    } else if (path.includes("provider")) {
+      if (path.includes("client-assessments")) {
+        response = "Our AR assessment tool will help you provide comprehensive home safety evaluations for your clients. You'll be able to scan their homes and get detailed recommendations for modifications that improve their safety and independence. Sign up for early access at info@yourhomease.com to be notified when we launch.";
+      } else if (path.includes("contractor-connections")) {
+        response = "We'll connect you with a network of highly-rated, CAPS-certified contractors who specialize in aging-in-place modifications. Our contractors are vetted for quality and reliability, ensuring your clients get the best care. Sign up for early access at info@yourhomease.com.";
+      } else if (path.includes("progress-tracking")) {
+        response = "Track your clients' home modification progress in real-time. Our platform will help you monitor project completion and ensure modifications meet your clients' needs. Sign up for early access at info@yourhomease.com.";
+      } else if (path.includes("educational-resources")) {
+        response = "Access educational materials to help your clients understand the importance of home modifications and how they improve safety and independence. Sign up for early access at info@yourhomease.com.";
+      } else {
+        response = "Thank you for your interest in HOMEase! We're developing tools specifically for healthcare providers to help assess and recommend home modifications for your patients. Our platform will connect you with highly-rated, CAPS-certified contractors. Sign up for early access at info@yourhomease.com.";
+      }
+    } else if (path.includes("contractor")) {
+      if (path.includes("join-network")) {
+        response = "It's completely free to create an account and join our contractor network! Our platform will connect qualified professionals with homeowners who need modifications. You'll be able to browse available leads and purchase only the ones that match your expertise and location. Contact us at info@yourhomease.com to join our waitlist and be notified when we launch.";
+      } else if (path.includes("lead-generation")) {
+        response = "Our lead generation system provides qualified, pre-screened homeowners who are ready to invest in safety modifications. Each lead includes detailed AR measurements, project scope, and homeowner information so you can decide if it's a good fit before purchasing. Contact us at info@yourhomease.com for more details.";
+      } else if (path.includes("contractor-services")) {
+        response = "We offer contractors detailed project measurements from AR scans, lead qualification data, and project management tools. Our platform is designed to streamline the home modification process and help you deliver accurate quotes. Contact us at info@yourhomease.com to learn more.";
+      } else if (path.includes("pricing")) {
+        response = "Account creation is completely free! You only pay for leads you want to purchase. Each lead includes detailed information so you can make informed decisions about which projects to pursue. Contact us at info@yourhomease.com for early access and pricing information.";
+      } else if (path.includes("contact")) {
+        response = "We'd love to hear from you! Contact us directly at info@yourhomease.com or call us at (555) 123-4567. Our team is available to answer any questions about our upcoming contractor platform.";
+      }
+    }
+
+    // Add response to chat and reset
+    const finalMessage = {
+      id: Date.now(),
+      text: response,
+      sender: 'bot',
+      timestamp: new Date(),
+      isFinal: true
+    };
+    
+    setChatMessages([finalMessage]);
+    setCurrentQuestion(-1); // Special state for final message
+  };
+
+  const resetChat = () => {
+    setCurrentQuestion(0);
+    setUserPath([]);
+    setQuestionHistory([]);
+    setChatMessages([
+      { id: 1, text: "Hi! I'm here to help with any questions about HOMEase. How can I assist you today?", sender: 'bot', timestamp: new Date() }
+    ]);
+  };
+
+  // Removed unused handleKeyPress function
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -144,8 +415,8 @@ function HomePage() {
                   <span className="text-white font-bold text-sm">H</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold">HOMEase Support</h3>
-                  <p className="text-xs opacity-90">Online now</p>
+                  <h3 className="font-semibold">HOMEase Guide</h3>
+                  <p className="text-xs opacity-90">Let me help you</p>
                 </div>
               </div>
               <button
@@ -160,46 +431,67 @@ function HomePage() {
 
             {/* Chat Messages */}
             <div className="flex-1 p-4 overflow-y-auto space-y-3">
-              {chatMessages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-xs px-4 py-2 rounded-2xl ${
-                      message.sender === 'user'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-900'
-                    }`}
-                  >
+              {/* Show current question or final message */}
+              {currentQuestion >= 0 && questionTree[currentQuestion] && (
+                <div className="space-y-3">
+                  <div className="flex justify-start">
+                    <div className="max-w-xs px-4 py-2 rounded-2xl bg-gray-100 text-gray-900">
+                      <p className="text-sm font-medium">{questionTree[currentQuestion].question}</p>
+                    </div>
+                  </div>
+                  
+                  {/* Question Options */}
+                  <div className="space-y-2">
+                    {questionTree[currentQuestion].options.map((option, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleOptionSelect(option)}
+                        className="w-full text-left px-4 py-2 rounded-lg border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition-colors text-sm"
+                      >
+                        {option.text}
+                      </button>
+                    ))}
+                  </div>
+                  
+                  {/* Back Button */}
+                  {questionHistory.length > 0 && (
+                    <div className="pt-2">
+                      <button
+                        onClick={handleBack}
+                        className="text-blue-600 hover:text-blue-700 text-xs font-medium flex items-center"
+                      >
+                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Back
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Show final response */}
+              {currentQuestion === -1 && chatMessages.map((message) => (
+                <div key={message.id} className="flex justify-start">
+                  <div className="max-w-xs px-4 py-2 rounded-2xl bg-gray-100 text-gray-900">
                     <p className="text-sm">{message.text}</p>
-                    <p className="text-xs opacity-70 mt-1">
-                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </p>
+                    <div className="mt-3">
+                      <button
+                        onClick={resetChat}
+                        className="text-blue-600 hover:text-blue-700 text-xs font-medium"
+                      >
+                        Start over
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Chat Input */}
+            {/* Chat Input - Hidden for question tree */}
             <div className="p-4 border-t border-gray-200">
-              <div className="flex space-x-2">
-                <input
-                  type="text"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Type your message..."
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <button
-                  onClick={handleSendMessage}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                  </svg>
-                </button>
+              <div className="text-center text-xs text-gray-500">
+                Select an option above to continue
               </div>
             </div>
           </div>
