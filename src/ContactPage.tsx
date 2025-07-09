@@ -37,7 +37,7 @@ const ContactPage: React.FC = () => {
       // Add form type identifier
       formDataToSend.append('formType', 'contact');
 
-      const response = await fetch('https://script.google.com/macros/s/AKfycbzTbpE5I7shAqam9i8Hcxu7fpDBPZp_PY8nOyekco4ivb8lPpsahQz_-tNrpc2Dl88kYw/exec', {
+      const response = await fetch('https://script.google.com/macros/s/AKfycbyjCpJKVgh2SaFyRK7yTzM1ToD105pIKPi66gqUiCk4p8pF3IOPsgyIhBIllkJytxCt9A/exec', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -115,6 +115,19 @@ const ContactPage: React.FC = () => {
           </p>
             <div className="space-y-4 mb-8">
             <p className="text-gray-700">Email: info@yourhomease.com</p>
+            </div>
+            
+            {/* Spam Check Notice */}
+            <div className="mb-8 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-start">
+                <svg className="w-5 h-5 text-yellow-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                <div className="text-sm text-yellow-800">
+                  <p className="font-medium mb-1">Important:</p>
+                  <p>After submitting, please check your email (including spam/junk folder) for a confirmation message. If you don't receive it within 5 minutes, please contact us directly at <strong>ulises@yourhomease.com</strong>.</p>
+                </div>
+              </div>
             </div>
           </div>
 

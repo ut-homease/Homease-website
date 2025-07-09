@@ -55,6 +55,16 @@ const Header: React.FC = () => {
               Contact
             </Link>
             <Link 
+              to="/support" 
+              className={`font-medium transition-colors duration-300 ${
+                isActive('/support') 
+                  ? 'text-blue-400' 
+                  : 'text-gray-300 hover:text-blue-400'
+              }`}
+            >
+              Support
+            </Link>
+            <Link 
               to="/blog" 
               className={`font-medium transition-colors duration-300 ${
                 isActive('/blog') 
@@ -143,6 +153,17 @@ const Header: React.FC = () => {
                   onClick={() => setShowMobileMenu(false)}
                 >
                   Contact
+                </Link>
+                <Link 
+                  to="/support" 
+                  className={`font-medium py-4 px-4 rounded-xl transition-all duration-300 ${
+                    isActive('/support') 
+                      ? 'text-blue-400 bg-gray-800 shadow-lg' 
+                      : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                  }`}
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  Support
                 </Link>
               <Link 
                 to="/blog" 

@@ -8,6 +8,7 @@ import InvestorsPage from './InvestorsPage';
 import ContractorsPage from './ContractorsPage';
 import TermsPage from './TermsPage';
 import PrivacyPage from './PrivacyPage';
+import SupportPage from './SupportPage';
 import Header from './Header';
 import Footer from './Footer';
 import CookieConsent from './components/CookieConsent';
@@ -49,6 +50,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/support" element={<SupportPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/investors" element={<InvestorsPage />} />
           <Route path="/contractors" element={<ContractorsPage />} />
@@ -352,13 +354,13 @@ function HomePage() {
       }
     } else if (path.includes("contractor")) {
       if (path.includes("join-network")) {
-        response = "It's completely free to create an account and join our contractor network! Our platform will connect qualified professionals with homeowners who need modifications. You'll be able to browse available leads and purchase only the ones that match your expertise and location. Contact us at info@yourhomease.com to join our waitlist and be notified when we launch.";
+        response = "It's completely free to create an account and join our contractor network! Our platform will connect qualified professionals with homeowners who need modifications. You'll be able to browse available customers and purchase only the ones that match your expertise and location. Contact us at info@yourhomease.com to join our waitlist and be notified when we launch.";
       } else if (path.includes("lead-generation")) {
         response = "Our lead generation system provides qualified, pre-screened homeowners who are ready to invest in safety modifications. Each lead includes detailed AR measurements, project scope, and homeowner information so you can decide if it's a good fit before purchasing. Contact us at info@yourhomease.com for more details.";
       } else if (path.includes("contractor-services")) {
         response = "We offer contractors detailed project measurements from AR scans, lead qualification data, and project management tools. Our platform is designed to streamline the home modification process and help you deliver accurate quotes. Contact us at info@yourhomease.com to learn more.";
       } else if (path.includes("pricing")) {
-        response = "Account creation is completely free! You only pay for leads you want to purchase. Each lead includes detailed information so you can make informed decisions about which projects to pursue. Contact us at info@yourhomease.com for early access and pricing information.";
+        response = "Account creation is completely free! You only pay for customers you want to purchase. Each customer includes detailed information so you can make informed decisions about which projects to pursue. Contact us at info@yourhomease.com for early access and pricing information.";
       } else if (path.includes("contact")) {
         response = "We'd love to hear from you! Contact us directly at info@yourhomease.com or call us at (555) 123-4567. Our team is available to answer any questions about our upcoming contractor platform.";
       }
@@ -657,7 +659,7 @@ function HomePage() {
               {/* STEP THREE */}
               <div className="flex flex-col items-center text-center">
                 <div className="w-full max-w-xs h-48 mb-6 rounded-xl border-2 border-blue-200 overflow-hidden shadow-lg">
-                  <img src="/step 3.webp" alt="Step 3 - Lead Qualification" className="w-full h-full object-cover" />
+                  <img src="/step 3.webp" alt="Step 3 - Customer Qualification" className="w-full h-full object-cover" />
                 </div>
                 <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">3</div>
                 <h3 className="font-bold text-lg mb-2">Get Your Report</h3>
@@ -681,7 +683,7 @@ function HomePage() {
               {/* STEP FIVE */}
               <div className="flex flex-col items-center text-center">
                 <div className="w-full max-w-xs h-48 mb-6 rounded-xl border-2 border-blue-200 overflow-hidden shadow-lg">
-                  <img src="/step 5.webp" alt="Step 5 - Lead Purchase" className="w-full h-full object-cover" />
+                  <img src="/step 5.webp" alt="Step 5 - Customer Purchase" className="w-full h-full object-cover" />
                 </div>
                 <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">5</div>
                 <h3 className="font-bold text-lg mb-2">Get Multiple Quotes</h3>

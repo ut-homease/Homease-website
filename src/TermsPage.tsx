@@ -75,7 +75,7 @@ const TermsPage: React.FC = () => {
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">5. Lead Generation & Contractor Services</h2>
                 <p className="text-gray-700 mb-4">
-                  HOMEase|AI operates as a lead generation platform that facilitates connections between homeowners and contractors. We provide pre-qualified, validated leads but do not:
+                  HOMEase|AI operates as a lead generation platform that facilitates connections between homeowners and contractors. We provide pre-qualified, validated customers but do not:
                 </p>
                 <ul className="list-disc pl-6 text-gray-700 mb-4">
                   <li>Guarantee the quality of contractor work or services</li>

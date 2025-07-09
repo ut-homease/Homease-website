@@ -110,7 +110,7 @@ const ContractorsPage: React.FC = () => {
             {/* Left: Headline, Subheadline, Download Badges */}
             <div className="space-y-8">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                Grow Your <span className="text-blue-600">Business</span> with Qualified Home Safety Leads
+                Grow Your <span className="text-blue-600">Business</span> with Qualified Home Safety Customers
               </h1>
               <p className="text-xl text-gray-600 leading-relaxed">
                 Connect with homeowners who are ready to invest in their safety. Our AI-powered platform provides detailed measurements and project scopes, making it easier to deliver accurate quotes and win more projects.
@@ -165,7 +165,7 @@ const ContractorsPage: React.FC = () => {
                     
                     {/* Description */}
                     <p className="text-white text-center text-sm opacity-90 leading-relaxed max-w-48">
-                      Connect with qualified leads and get detailed project measurements
+                      Connect with qualified customers and get detailed project measurements
                     </p>
                   </div>
                 </div>
@@ -188,7 +188,7 @@ const ContractorsPage: React.FC = () => {
                     {/* Sidebar */}
                     <div className="w-16 bg-blue-800 flex flex-col items-center py-6 space-y-8">
                       <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                        {/* Leads Icon */}
+                        {/* Customers Icon */}
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M3 7V6a2 2 0 012-2h2a2 2 0 012 2v1m10 0V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v1m-6 0h16m-2 0v10a2 2 0 01-2 2H7a2 2 0 01-2-2V7m2 0v10m10-10v10" />
                         </svg>
@@ -234,7 +234,7 @@ const ContractorsPage: React.FC = () => {
                   <div className="w-48 h-4 bg-gray-700 rounded-lg shadow-lg"></div>
                 </div>
               </div>
-              <p className="mt-4 text-gray-600 text-center text-sm">Full-featured desktop dashboard for managing leads, projects, and communication. Access from any browser on your computer.</p>
+              <p className="mt-4 text-gray-600 text-center text-sm">Full-featured desktop dashboard for managing customers, projects, and communication. Access from any browser on your computer.</p>
             </div>
           </div>
         </div>
@@ -255,8 +255,7 @@ const ContractorsPage: React.FC = () => {
                 <img src="/step 1.webp" alt="Step 1 - Upload Room Photo" className="w-full h-full object-cover" />
               </div>
               <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">1</div>
-              <h3 className="font-bold text-lg mb-2">STEP ONE</h3>
-              <p className="font-semibold mb-1">UPLOAD ROOM PHOTO</p>
+              <h3 className="font-bold text-lg mb-2">UPLOAD ROOM PHOTO</h3>
               <p className="text-gray-600 leading-relaxed">User uploads room photo using app.</p>
             </div>
             {/* STEP TWO */}
@@ -265,18 +264,16 @@ const ContractorsPage: React.FC = () => {
                 <img src="/step 2.webp" alt="Step 2 - AI Analysis" className="w-full h-full object-cover" />
               </div>
               <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">2</div>
-              <h3 className="font-bold text-lg mb-2">STEP TWO</h3>
-              <p className="font-semibold mb-1">AI ANALYSIS</p>
+              <h3 className="font-bold text-lg mb-2">AI ANALYSIS</h3>
               <p className="text-gray-600 leading-relaxed">AI + AR analyze photo and provide ADA recommendations.</p>
             </div>
             {/* STEP THREE */}
             <div className="flex flex-col items-center text-center">
               <div className="w-full max-w-xs h-48 mb-6 rounded-xl border-2 border-blue-200 overflow-hidden shadow-lg">
-                <img src="/step 3.webp" alt="Step 3 - Lead Qualification" className="w-full h-full object-cover" />
+                <img src="/step 3.webp" alt="Step 3 - Customer Qualification" className="w-full h-full object-cover" />
               </div>
-              <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">3</div>
-              <h3 className="font-bold text-lg mb-2">STEP THREE</h3>
-              <p className="font-semibold mb-1">LEAD QUALIFICATION</p>
+                            <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">3</div>
+              <h3 className="font-bold text-lg mb-2">CUSTOMER QUALIFICATION</h3>
               <p className="text-gray-600 leading-relaxed">Capture user info, scope of work and preferences.</p>
             </div>
             {/* STEP FOUR */}
@@ -285,19 +282,17 @@ const ContractorsPage: React.FC = () => {
                 <img src="/step 4.webp" alt="Step 4 - Contractor Matching" className="w-full h-full object-cover" />
               </div>
               <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">4</div>
-              <h3 className="font-bold text-lg mb-2">STEP FOUR</h3>
-              <p className="font-semibold mb-1">CONTRACTOR MATCHING</p>
+              <h3 className="font-bold text-lg mb-2">CONTRACTOR MATCHING</h3>
               <p className="text-gray-600 leading-relaxed">User sends report to qualified local contractor for bid.</p>
             </div>
             {/* STEP FIVE */}
             <div className="flex flex-col items-center text-center">
               <div className="w-full max-w-xs h-48 mb-6 rounded-xl border-2 border-blue-200 overflow-hidden shadow-lg">
-                <img src="/step 5.webp" alt="Step 5 - Lead Purchase" className="w-full h-full object-cover" />
+                <img src="/step 5.webp" alt="Step 5 - Customer Purchase" className="w-full h-full object-cover" />
               </div>
-              <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">5</div>
-              <h3 className="font-bold text-lg mb-2">STEP FIVE</h3>
-              <p className="font-semibold mb-1">LEAD PURCHASE</p>
-              <p className="text-gray-600 leading-relaxed">Contractor purchases lead.</p>
+                            <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">5</div>
+              <h3 className="font-bold text-lg mb-2">CUSTOMER PURCHASE</h3>
+                              <p className="text-gray-600 leading-relaxed">Contractor purchases lead.</p>
             </div>
             {/* STEP SIX */}
             <div className="flex flex-col items-center text-center">
@@ -305,8 +300,7 @@ const ContractorsPage: React.FC = () => {
                 <img src="/step 6.webp" alt="Step 6 - Customer Contact" className="w-full h-full object-cover" />
               </div>
               <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-3">6</div>
-              <h3 className="font-bold text-lg mb-2">STEP SIX</h3>
-              <p className="font-semibold mb-1">CUSTOMER CONTACT</p>
+              <h3 className="font-bold text-lg mb-2">CUSTOMER CONTACT</h3>
               <p className="text-gray-600 leading-relaxed">Contractor contacts customer to schedule home modification.</p>
             </div>
           </div>
@@ -339,7 +333,7 @@ const ContractorsPage: React.FC = () => {
                   <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="2" fill="none" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3 flex items-center justify-center gap-2">High-Intent Leads</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3 flex items-center justify-center gap-2">High-Intent Customers</h3>
               <p className="text-gray-600">
                 Homeowners who have completed assessments and are ready to start projects within 30 days.
               </p>
@@ -355,7 +349,7 @@ const ContractorsPage: React.FC = () => {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3 flex items-center justify-center gap-2">Mobile Dashboard</h3>
               <p className="text-gray-600">
-                Manage leads, view project details, and communicate with clients from your phone or tablet.
+                Manage customers, view project details, and communicate with clients from your phone or tablet.
               </p>
             </div>
             
@@ -655,23 +649,23 @@ const ContractorsPage: React.FC = () => {
             {[
               {
                 question: "What is HOMEase | AI?",
-                answer: "HOMEase AI is an intelligent home assessment tool that uses AR scanning and ADA-compliant rules to instantly identify safety risks—like narrow doorways or missing grab bars—and generate customized modification recommendations. It streamlines the path from inspection to project-ready lead by producing contractor-friendly reports and optional insurance-ready summaries."
+                                  answer: "HOMEase AI is an intelligent home assessment tool that uses AR scanning and ADA-compliant rules to instantly identify safety risks—like narrow doorways or missing grab bars—and generate customized modification recommendations. It streamlines the path from inspection to project-ready lead by producing contractor-friendly reports and optional insurance-ready summaries."
               },
               {
                 question: "Who is HOMEase for?",
-                answer: "HOMEase AI is built for licensed contractors, occupational therapists, and home service providers who want fast, qualified leads in the aging-in-place and home accessibility market."
+                answer: "HOMEase AI is built for licensed contractors, occupational therapists, and home service providers who want fast, qualified customers in the aging-in-place and home accessibility market."
               },
               {
-                question: "How do I get leads from HOMEase?",
+                question: "How do I get customers from HOMEase?",
                 answer: "Once you join the platform, you'll receive homeowner referrals that include an AR scan, AI-generated recommendations, and a scope of work. You can submit a bid instantly for each project and, if selected, contact the homeowner directly. No cold calls, no wasted visits—just real, actionable opportunities."
               },
               {
-                question: "What types of projects are these leads for?",
+                question: "What types of projects are these customers for?",
                 answer: "Most projects involve aging-in-place modifications like grab bars, widened doorways, ramps, roll-in showers, and general ADA upgrades. Every lead is backed by a specific safety assessment, and contractors are required to submit a bid to win the project."
               },
               {
                 question: "How much does it cost to join HOMEase?",
-                answer: "It's free to join. Contractors only pay a small referral fee per accepted project or can choose a premium subscription for exclusive leads and enhanced visibility."
+                answer: "It's free to join. Contractors only pay a small referral fee per accepted project or can choose a premium subscription for exclusive customers and enhanced visibility."
               },
               {
                 question: "What makes HOMEase different from other apps or services?",
@@ -687,7 +681,7 @@ const ContractorsPage: React.FC = () => {
               },
               {
                 question: "How do I get started with HOMEase?",
-                answer: "Simply download the app, create a contractor account, and follow the onboarding steps. Once approved, you'll start receiving qualified leads and can begin bidding on projects right away."
+                answer: "Simply download the app, create a contractor account, and follow the onboarding steps. Once approved, you'll start receiving qualified customers and can begin bidding on projects right away."
               },
               {
                 question: "Who do I contact if I need help?",

@@ -87,7 +87,7 @@ const PrivacyPage: React.FC = () => {
                   <li>Create detailed assessment reports with budget estimations</li>
                   <li>Validate homeowner intent and project requirements</li>
                   <li>Improve our AR and AI models for better accuracy</li>
-                  <li>Provide contractors with pre-qualified, detailed leads</li>
+                  <li>Provide contractors with pre-qualified, detailed customers</li>
                 </ul>
                 <p className="text-gray-700 mb-4">
                   <strong>Note:</strong> Your AR scans may be used to train and improve our AI systems, but we ensure no personally identifiable information is retained in training data. All data used for model improvement is anonymized and aggregated.
@@ -109,7 +109,7 @@ const PrivacyPage: React.FC = () => {
                   <li>Understand your specific accessibility needs and budget range</li>
                 </ul>
                 <p className="text-gray-700 mb-4">
-                  <strong>Lead Quality:</strong> Our AR-validated leads include confirmed homeowner intent, specific modification requirements, budget estimations, and urgency indicators to improve contractor conversion rates.
+                  <strong>Customer Quality:</strong> Our AR-validated customers include confirmed homeowner intent, specific modification requirements, budget estimations, and urgency indicators to improve contractor conversion rates.
                 </p>
 
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">5.2 Service Providers</h3>
